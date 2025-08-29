@@ -283,3 +283,6 @@ func CreateSearchTable() {
 func ExistSearchTable() bool {
 	return db.Mdb.Migrator().HasTable(&SearchInfo{})
 }
+func RemoveCache(key string) {
+	db.Rdb.Del(db.Cxt, key)
+}

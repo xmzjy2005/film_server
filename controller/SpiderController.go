@@ -35,4 +35,6 @@ func StartSpider(c *gin.Context) {
 		logic.SL.StartCollect(cp.Id, cp.Time)
 
 	}
+	// 返回成功执行的信息
+	system.SuccessOnlyMsg("采集任务已成功开启!!!", c)
 }

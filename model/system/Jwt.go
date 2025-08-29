@@ -3,8 +3,8 @@ package system
 import (
 	"errors"
 	"film_server/config"
+	"film_server/plugin/common/util"
 	"film_server/plugin/db"
-	"film_server/plugin/util"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"log"

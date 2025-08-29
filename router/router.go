@@ -35,6 +35,12 @@ func SetupRouter() *gin.Engine {
 		{
 			spiderRoute.POST("/start", controller.StartSpider)
 		}
+
+		//影视管理
+		filmRoute := manageRoute.Group("film")
+		{
+			filmRoute.GET("/class/tree", controller.FilmClassTree)
+		}
 	}
 	return r
 }

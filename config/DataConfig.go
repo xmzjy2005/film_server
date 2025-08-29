@@ -7,6 +7,7 @@ const (
 	ListenerPort         = "3601"
 	MAXGoroutine         = 10
 	FilmPictureUploadDir = "./static/upload/gallery" //保存影片的封面图片的本地目录 这是哪里？？
+	FilmPictureAccess    = "/api/upload/pic/poster/"
 )
 const (
 	// SearchTableName 存放检索信息的数据表名
@@ -30,6 +31,11 @@ const (
 const (
 	// FilmSourceListKey 采集 API 信息列表key
 	FilmSourceListKey = "Config:Collect:FilmSource"
+)
+
+// ----------- web Api 相关的redis key--------------
+const (
+	IndexCacheKey = "IndexCache"
 )
 
 // -------------------------redis key-----------------------------------

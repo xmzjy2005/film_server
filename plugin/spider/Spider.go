@@ -4,7 +4,7 @@ import (
 	"errors"
 	"film_server/model/system"
 	"film_server/plugin/common/conver"
-	"film_server/plugin/util"
+	"film_server/plugin/common/util"
 	"fmt"
 	"log"
 	"net/url"
@@ -65,22 +65,23 @@ func HandleCollect(id string, h int) error {
 
 		//测试，先执行一个分页的数据采集
 		collectFilm(s, h, 1)
+		//视频采集数据完成后，同步到mysql
+		if s.Grade == system.MasterCollect {
+			if h > 0 {
+				system.SyncSearchInfo(1)
+			} else {
+				system.SyncSearchInfo(0)
+			}
+			//开启图片同步
+			if s.SyncPictures {
+				system.SyncFilmPicture()
+			}
+			//执行完清除首页缓存
+			ClearCache()
+		}
 		break
 	default:
 		fmt.Println("其他采集类型开发中...")
-
-	}
-	//视频采集数据完成后，同步到mysql
-	if s.Grade == system.MasterCollect {
-		if h > 0 {
-			system.SyncSearchInfo(1)
-		} else {
-			system.SyncSearchInfo(0)
-		}
-		//开启图片同步
-		if s.SyncPictures {
-			system.SyncFilmPicture()
-		}
 	}
 	return nil
 }

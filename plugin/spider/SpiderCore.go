@@ -6,7 +6,7 @@ import (
 	"film_server/model/collect"
 	"film_server/model/system"
 	"film_server/plugin/common/conver"
-	"film_server/plugin/util"
+	"film_server/plugin/common/util"
 	"fmt"
 )
 

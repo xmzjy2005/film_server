@@ -2,7 +2,7 @@ package SystemInit
 
 import (
 	"film_server/model/system"
-	"film_server/plugin/util"
+	"film_server/plugin/common/util"
 	"log"
 )
 

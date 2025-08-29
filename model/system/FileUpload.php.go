@@ -5,8 +5,12 @@ import (
 	"film_server/config"
 	"film_server/plugin/common/util"
 	"film_server/plugin/db"
+	"fmt"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
+	"path/filepath"
+	"regexp"
+	"strings"
 )
 
 // FileInfo 图片信息对象
@@ -19,6 +23,11 @@ type FileInfo struct {
 	Fid         string `json:"fid"`         // 图片唯一标识, 通常为文件名
 	FileType    string `json:"fileType"`    // 文件类型, txt, png, jpg
 	//Size        int    `json:"size"`        // 文件大小
+}
+
+// TableName 设置图片存储表的表名
+func (f *FileInfo) TableName() string {
+	return config.FileTableName
 }
 
 // 采集入站 到redis的存储对象
@@ -61,11 +70,30 @@ func SyncFilmPicture() {
 			continue
 		}
 		//将图片保存到服务器中
-		util.SaveOnlineFile(vp.Link, config.FilmPictureUploadDir)
+		fileName, err := util.SaveOnlineFile(vp.Link, config.FilmPictureUploadDir)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		//将本地的图片路径保存到gallery中
+		SaveGallery(FileInfo{
+			Link:        fmt.Sprint(config.FilmPictureAccess, fileName),
+			Uid:         config.UserIdInitialVal,
+			RelevanceId: vp.Id,
+			Type:        0,
+			Fid:         regexp.MustCompile(`\.[^.]+$`).ReplaceAllString(fileName, ""), //去掉.后缀
+			FileType:    strings.TrimPrefix(filepath.Ext(fileName), "."),               //后缀
+		})
+
 	}
+	//递归执行直到缓存为空
+	SyncFilmPicture()
 }
 func ExistFileInfoByRid(rid int64) bool {
 	var count int64
 	db.Mdb.Model(&FileInfo{}).Where("relevance_id = ?", rid).Count(&count)
 	return count > 0
+}
+func SaveGallery(info FileInfo) {
+	db.Mdb.Create(&info)
 }
